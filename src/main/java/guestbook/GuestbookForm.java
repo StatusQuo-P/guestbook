@@ -16,6 +16,7 @@
 package guestbook;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Email;
 
 /**
  * Type to bind request payloads and make them available in the controller. In contrast to {@link GuestbookEntry} it is
@@ -30,21 +31,27 @@ import javax.validation.constraints.NotBlank;
 class GuestbookForm {
 
 	private final @NotBlank String name;
+	@NotBlank
+	//#3
+	@Email(regexp = ".+@.+\\..+")
+	private final String mail;
 	private final @NotBlank String text;
 
 	/**
-	 * Creates a new {@link GuestbookForm} with the given name and text. Spring Framework will use this constructor to
+	 * Creates a new {@link GuestbookForm} with the given name, mail and text. Spring Framework will use this constructor to
 	 * bind the values provided in the web form described in {@code src/main/resources/templates/guestbook.html}, in
-	 * particular the {@code name} and {@code text} fields as they correspond to the parameter names of the constructor.
+	 * particular the {@code name}, {@code mail} and {@code text} fields as they correspond to the parameter names of the constructor.
 	 * The constructor needs to be public so that Spring will actually consider it for form data binding until
 	 * {@link https://github.com/spring-projects/spring-framework/issues/22600} is resolved.
 	 *
 	 * @param name the value to bind to {@code name}
+	 * @param mail the value to bind to {@code mail}
 	 * @param text the value to bind to {@code text}
 	 */
-	public GuestbookForm(String name, String text) {
+	public GuestbookForm(String name, String mail, String text) {
 
 		this.name = name;
+		this.mail = mail;
 		this.text = text;
 	}
 
@@ -71,12 +78,21 @@ class GuestbookForm {
 	}
 
 	/**
+	 * Returns the value bound to the {@code mail} attribute of the request. Needs to be public so that Spring will
+	 * actually consider it for form data binding until
+	 * {@link https://github.com/spring-projects/spring-framework/issues/22600} is resolved.
+	 *
+	 * @return the value bound to {@code mail}
+	 */
+	public String getMail() {return mail;}
+
+	/**
 	 * Returns a new {@link GuestbookEntry} using the data submitted in the request.
 	 *
 	 * @return the newly created {@link GuestbookEntry}
 	 * @throws IllegalArgumentException if you call this on an instance without the name and text actually set.
 	 */
 	GuestbookEntry toNewEntry() {
-		return new GuestbookEntry(getName(), getText());
+		return new GuestbookEntry(getName(), getMail(), getText());
 	}
 }
