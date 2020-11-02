@@ -47,6 +47,7 @@ class GuestbookEntry {
 	public GuestbookEntry(String name, String mail, String text) {
 
 		Assert.hasText(name, "Name must not be null or empty!");
+		Assert.hasText(mail, "Name must not be null or empty!");
 		Assert.hasText(text, "Text must not be null or empty!");
 
 		this.name = name;
